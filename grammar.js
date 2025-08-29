@@ -240,7 +240,7 @@ module.exports = grammar({
       $._primary_expression
     ),
     prefix_expression: $ => seq(
-      choice(
+      field("operator", choice(
         "++",
         "--",
         "+",
@@ -249,12 +249,12 @@ module.exports = grammar({
         "~",
         "&",
         "*"
-      ),
+      )),
       $._primary_expression
     ),
     postfix_expression: $ => seq(
       $._primary_expression,
-      choice("++", "--")
+      field("operator", choice("++", "--"))
     ),
 
     _primary_expression: $ => choice(
