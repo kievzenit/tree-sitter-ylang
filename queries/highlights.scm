@@ -65,8 +65,12 @@
 (type_identifier) @type
 (builtin_type) @type.builtin
 
-(integer_expression) @number
-(float_expression) @number.float
+(integer_expression
+  (integer_literal) @number
+  type: (integer_type) @type.builtin)
+(float_expression
+  (float_literal) @number.float
+  type: (float_type) @type.builtin)
 (string_expression) @string
 (char_expression) @string.character
 (boolean_expression) @constant.builtin
