@@ -37,7 +37,6 @@
   ">="
   "+"
   "-"
-  "*"
   "/"
   "%"
   "&"
@@ -57,6 +56,9 @@
   ">>="
   "<<="
 ] @operator
+
+(binary_expression operator: "*" @operator)
+(prefix_expression operator: "*" @operator)
 
 (comment) @comment
 
