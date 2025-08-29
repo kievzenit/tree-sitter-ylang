@@ -27,8 +27,8 @@ module.exports = grammar({
     ),
 
     package_name: $ => seq(
-      $._identifier_literal,
-      repeat(seq("::", $._identifier_literal))
+      $.identifier_literal,
+      repeat(seq("::", $.identifier_literal))
     ),
 
     _top_statement: $ => seq(
@@ -321,12 +321,18 @@ module.exports = grammar({
       $.string_expression,
       $.char_expression
     ),
-    identifier_expression: $ => $._identifier_literal,
-    integer_expression: $ => $._integer_literal,
-    float_expression: $ => $._float_literal,
-    string_expression: $ => $._string_literal,
-    char_expression: $ => $._char_literal,
-    boolean_expression: $ => $._boolean_literal,
+    identifier_expression: $ => $.identifier_literal,
+    integer_expression: $ => seq(
+      $.integer_literal,
+      field("type", optional(seq(":", $.integer_type)))
+    ),
+    float_expression: $ => seq(
+      $.float_literal,
+      field("type", optional(seq(":", $.float_type)))
+    ),
+    string_expression: $ => $.string_literal,
+    char_expression: $ => $.char_literal,
+    boolean_expression: $ => $.boolean_literal,
 
     _type_identifier: $ => alias($._type, $.type_identifier),
     _type: $ => choice(
@@ -342,11 +348,11 @@ module.exports = grammar({
 
     pointer_type: $ => seq("*", $._type),
 
-    array_type: $ => seq("[", optional($._integer_literal), "]", $._type),
+    array_type: $ => seq("[", optional($.integer_literal), "]", $._type),
 
     base_type: $ => seq(
-      $._identifier_literal,
-      repeat(seq("::", $._identifier_literal))
+      $.identifier_literal,
+      repeat(seq("::", $.identifier_literal))
     ),
 
     builtin_type: $ => choice(
@@ -384,8 +390,8 @@ module.exports = grammar({
       "float128",
     ),
 
-    _identifier_literal: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
-    _char_literal: $ => seq(
+    identifier_literal: $ => /[a-zA-Z_][a-zA-Z0-9_]*/,
+    char_literal: $ => seq(
       "'",
       choice(
         /[^'\\\n]/,
@@ -393,7 +399,7 @@ module.exports = grammar({
       ),
       "'"
     ),
-    _string_literal: $ => seq(
+    string_literal: $ => seq(
       '"',
       repeat(choice(
         /[^"\\\n]/,
@@ -401,35 +407,31 @@ module.exports = grammar({
       )),
       '"'
     ),
-    _boolean_literal: $ => choice("true", "false"),
-    _float_literal: $ => seq(/[0-9]+\.[0-9]+/, optional(seq(":", $.float_type))),
-    _integer_literal: $ => choice(
-      seq($._decimal_number_literal, optional(seq(":", $.integer_type))),
-      $._complex_hexadecimal_literal,
-      $._complex_decimal_literal,
-      $._complex_octal_literal,
-      $._complex_binary_literal
+    boolean_literal: $ => choice("true", "false"),
+    float_literal: $ => /([0-9]+\.[0-9]+)(e[\+\-]?[0-9]+)?/,
+    integer_literal: $ => choice(
+      /[0-9]+(_[0-9]+)?/,
+      $.complex_hexadecimal_literal,
+      $.complex_decimal_literal,
+      $.complex_octal_literal,
+      $.complex_binary_literal
     ),
 
-    _complex_hexadecimal_literal: $ => seq(
+    complex_hexadecimal_literal: $ => seq(
       "0x",
       repeat1($._hexadecimal_digit)
     ),
-    _complex_decimal_literal: $ => seq(
+    complex_decimal_literal: $ => seq(
       "0d",
       repeat1($._decimal_digit)
     ),
-    _complex_octal_literal: $ => seq(
+    complex_octal_literal: $ => seq(
       "0o",
       repeat1($._octal_digit)
     ),
-    _complex_binary_literal: $ => seq(
+    complex_binary_literal: $ => seq(
       "0b",
       repeat1($._binary_digit)
-    ),
-    _decimal_number_literal: $ => seq(
-      $._decimal_digit,
-      repeat(seq("_", $._decimal_digit))
     ),
 
     _hexadecimal_digit: $ => /[0-9a-fA-F]/,
