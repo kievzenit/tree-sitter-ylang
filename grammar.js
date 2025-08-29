@@ -324,11 +324,11 @@ module.exports = grammar({
     identifier_expression: $ => $.identifier_literal,
     integer_expression: $ => seq(
       $.integer_literal,
-      field("type", optional(seq(":", $.integer_type)))
+      optional(seq(":", field("type", $.integer_type)))
     ),
     float_expression: $ => seq(
       $.float_literal,
-      field("type", optional(seq(":", $.float_type)))
+      optional(seq(":", field("type", $.float_type)))
     ),
     string_expression: $ => $.string_literal,
     char_expression: $ => $.char_literal,
@@ -410,7 +410,7 @@ module.exports = grammar({
     boolean_literal: $ => choice("true", "false"),
     float_literal: $ => /([0-9]+\.[0-9]+)(e[\+\-]?[0-9]+)?/,
     integer_literal: $ => choice(
-      /[0-9]+(_[0-9]+)?/,
+      /[0-9]+(_[0-9]+)*/,
       $.complex_hexadecimal_literal,
       $.complex_decimal_literal,
       $.complex_octal_literal,
